@@ -37,7 +37,7 @@ const TicTacToe = () => {
       if (cells.every((cell) => cell === "X")) setWinner("X");
     });
 
-    if (board.every((cell) => cell !== "")) console.log("velha");
+    if (board.every((cell) => cell !== "")) setWinner("T");
   }
 
   function restartGame() {
@@ -71,8 +71,8 @@ const TicTacToe = () => {
           </div>
         ))}
       </main>
-      {winner && (
-        <footer className="footer">
+      <footer className="footer">
+        {(winner === "X" || winner === "O") && (
           <p>
             The{" "}
             <span className={`player ${winner.toLowerCase()}`}>
@@ -80,15 +80,14 @@ const TicTacToe = () => {
             </span>
             won the game!
           </p>
-          <button
-            className="restart-button"
-            type="button"
-            onClick={restartGame}
-          >
-            Restart game
-          </button>
-        </footer>
-      )}
+        )}
+
+        {winner === "T" && <p>No one won the game.</p>}
+
+        <button className="restart-button" type="button" onClick={restartGame}>
+          Restart game
+        </button>
+      </footer>
     </div>
   );
 };
