@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./tictactoe.css";
+import "./style.css";
 
 type PlayerType = {
   count: number;
@@ -9,11 +9,19 @@ type PlayerType = {
 const TicTacToe = () => {
   const emptyBoard = Array(9).fill("");
   const [board, setBoard] = useState(emptyBoard);
-  const [players, setPlayers] = useState([
-    { count: 0, currentCharacter: "X" },
-    { count: 0, currentCharacter: "O" },
-  ]);
-  const [currentPlayer, setCurrentPlayer] = useState(players[0]);
+
+  const [players, setPlayers] = useState({
+    one: {
+      count: 0,
+      currentCharacter: "X",
+    },
+    two: {
+      count: 0,
+      currentCharacter: "O",
+    },
+  });
+
+  const [currentPlayer, setCurrentPlayer] = useState<PlayerType>(players.one);
   const [winner, setWinner] = useState<PlayerType | null>(null);
 
   function handleClickCell(index: number) {
@@ -26,7 +34,7 @@ const TicTacToe = () => {
       )
     );
 
-    setCurrentPlayer(currentPlayer === players[0] ? players[1] : players[0]);
+    setCurrentPlayer(currentPlayer === players.one ? players.two : players.one);
   }
 
   function checkWin() {
@@ -42,13 +50,18 @@ const TicTacToe = () => {
       [board[0], board[4], board[8]],
       [board[2], board[4], board[6]],
     ];
-    console.log(currentPlayer);
     conditionsToWin.forEach((cells) => {
-      if (cells.every((cell) => cell === "O")) setWinner({ ...currentPlayer });
-      if (cells.every((cell) => cell === "X")) setWinner({ ...currentPlayer });
+      if (cells.every((cell) => cell === "X")) {
+        players.one.count++;
+        setWinner(players.one);
+      }
+      if (cells.every((cell) => cell === "O")) {
+        players.two.count++;
+        setWinner(players.two);
+      }
     });
 
-    if (board.every((cell) => cell !== "")) setWinner(null);
+    // if (board.every((cell) => cell !== "")) setWinner(null);
   }
 
   function restartGame() {
@@ -60,21 +73,26 @@ const TicTacToe = () => {
 
   return (
     <div className="container">
-      <div style={{ textAlign: "center" }}>
+      <div className="counter">
         <h4>Win count</h4>
-        {/* <h5>Player 1: {winCount.playerOne}</h5>
-        <h5>Player 2: {winCount.playerTwo}</h5> */}
+        <h5>
+          Player 1 ({players.one.currentCharacter}): {players.one.count}
+        </h5>
+        <h5>
+          Player 2 ({players.two.currentCharacter}): {players.two.count}
+        </h5>
       </div>
-      {winner !== null && (
+      {winner === null && (
         <header>
           <p className="header">
-            Player 1
+            It's
             <span
               className={`player ${currentPlayer.currentCharacter.toLowerCase()}`}
             >
               {" "}
-              ({currentPlayer.currentCharacter})
+              player {currentPlayer.currentCharacter}'s{" "}
             </span>
+            turn
           </p>
         </header>
       )}
@@ -95,13 +113,13 @@ const TicTacToe = () => {
           <p>
             The{" "}
             <span className={`player ${winner.currentCharacter.toLowerCase()}`}>
-              player {winner}{" "}
+              player {winner.currentCharacter}{" "}
             </span>
             won the game!
           </p>
         )}
 
-        {winner?.currentCharacter === "T" && <p>No one won the game.</p>}
+        {board.every((cell) => cell !== "") && <p>No one won the game.</p>}
 
         <button className="restart-button" type="button" onClick={restartGame}>
           Restart game
