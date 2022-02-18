@@ -1,28 +1,30 @@
 import { useEffect, useState } from "react";
 import "./style.css";
 
-type PlayerType = {
+interface Player {
   count: number;
-  currentCharacter: string;
-};
+  character: string;
+}
 
+interface Players {
+  one: Player;
+  two: Player;
+}
 const TicTacToe = () => {
   const emptyBoard = Array(9).fill("");
-  const [board, setBoard] = useState(emptyBoard);
-
-  const [players, setPlayers] = useState({
+  const [board, setBoard] = useState<Array<string>>(emptyBoard);
+  const [players, setPlayers] = useState<Players>({
     one: {
       count: 0,
-      currentCharacter: "X",
+      character: "X",
     },
     two: {
       count: 0,
-      currentCharacter: "O",
+      character: "O",
     },
   });
-
-  const [currentPlayer, setCurrentPlayer] = useState<PlayerType>(players.one);
-  const [winner, setWinner] = useState<PlayerType | null>(null);
+  const [currentPlayer, setCurrentPlayer] = useState<Player>(players.one);
+  const [winner, setWinner] = useState<Player | null>(null);
 
   function handleClickCell(index: number) {
     if (board[index] !== "") return;
@@ -30,7 +32,7 @@ const TicTacToe = () => {
 
     setBoard(
       board.map((item, itemIndex) =>
-        itemIndex === index ? currentPlayer.currentCharacter : item
+        itemIndex === index ? currentPlayer.character : item
       )
     );
 
@@ -53,18 +55,18 @@ const TicTacToe = () => {
     conditionsToWin.forEach((cells) => {
       if (cells.every((cell) => cell === "X")) {
         players.one.count++;
+        setPlayers({ ...players });
         setWinner(players.one);
       }
       if (cells.every((cell) => cell === "O")) {
         players.two.count++;
+        setPlayers({ ...players });
         setWinner(players.two);
       }
     });
-
-    // if (board.every((cell) => cell !== "")) setWinner(null);
   }
 
-  function restartGame() {
+  function resetGame() {
     setBoard(emptyBoard);
     setWinner(null);
   }
@@ -76,21 +78,19 @@ const TicTacToe = () => {
       <div className="counter">
         <h4>Win count</h4>
         <h5>
-          Player 1 ({players.one.currentCharacter}): {players.one.count}
+          Player 1 ({players.one.character}): {players.one.count}
         </h5>
         <h5>
-          Player 2 ({players.two.currentCharacter}): {players.two.count}
+          Player 2 ({players.two.character}): {players.two.count}
         </h5>
       </div>
       {winner === null && (
         <header>
           <p className="header">
             It's
-            <span
-              className={`player ${currentPlayer.currentCharacter.toLowerCase()}`}
-            >
+            <span className={`player ${currentPlayer.character.toLowerCase()}`}>
               {" "}
-              player {currentPlayer.currentCharacter}'s{" "}
+              player {currentPlayer.character}'s{" "}
             </span>
             turn
           </p>
@@ -108,12 +108,11 @@ const TicTacToe = () => {
         ))}
       </main>
       <footer className="footer">
-        {(winner?.currentCharacter === "X" ||
-          winner?.currentCharacter === "O") && (
+        {(winner?.character === "X" || winner?.character === "O") && (
           <p>
             The{" "}
-            <span className={`player ${winner.currentCharacter.toLowerCase()}`}>
-              player {winner.currentCharacter}{" "}
+            <span className={`player ${winner.character.toLowerCase()}`}>
+              player {winner.character}{" "}
             </span>
             won the game!
           </p>
@@ -121,7 +120,7 @@ const TicTacToe = () => {
 
         {board.every((cell) => cell !== "") && <p>No one won the game.</p>}
 
-        <button className="restart-button" type="button" onClick={restartGame}>
+        <button className="restart-button" type="button" onClick={resetGame}>
           Restart game
         </button>
       </footer>
