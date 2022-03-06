@@ -118,7 +118,9 @@ const TicTacToe = () => {
           </p>
         )}
 
-        {board.every((cell) => cell !== "") && <p>No one won the game.</p>}
+        {board.every((cell) => cell !== "") && winner === null && (
+          <p>No one won the game.</p>
+        )}
 
         <button className="restart-button" type="button" onClick={resetGame}>
           Restart game
