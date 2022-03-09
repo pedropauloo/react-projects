@@ -1,3 +1,4 @@
+import moment from "moment";
 import { ChatInputMessage } from "./ChatInputMessage";
 import { ChatMessageBox } from "./ChatMessageBox";
 import {
@@ -16,10 +17,26 @@ export const Chat = () => {
         <ChatTitle>CHAT</ChatTitle>
       </ChatHeader>
       <ChatContent>
-        <ChatMessageBox author="own" date={new Date()} message="messagem" />
-        <ChatMessageBox author="other" date={new Date()} message="messagem" />
-        <ChatMessageBox author="own" date={new Date()} message="messagem" />
-        <ChatMessageBox author="other" date={new Date()} message="messagem" />
+        <ChatMessageBox
+          author="own"
+          date={moment().format("DD/MM/YYYY H:m")}
+          message="messagem"
+        />
+        <ChatMessageBox
+          author="other"
+          date={moment().format("DD/MM/YYYY H:m")}
+          message="messagem"
+        />
+        <ChatMessageBox
+          author="own"
+          date={moment().format("DD/MM/YYYY H:m")}
+          message="messagem"
+        />
+        <ChatMessageBox
+          author="other"
+          date={moment().format("DD/MM/YYYY H:m")}
+          message="messagem"
+        />
       </ChatContent>
       <ChatFooter>
         <ChatInputMessage label="Message" />

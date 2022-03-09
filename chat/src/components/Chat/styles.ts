@@ -16,6 +16,7 @@ export const ChatHeader = styled.div`
 export const ChatContent = styled.div`
   background: #ccc;
   height: 100%;
+  overflow: auto;
 `;
 export const ChatFooter = styled.div`
   display: flex;
@@ -75,6 +76,16 @@ export const ChatButton = styled.button`
   margin-right: 6px;
 `;
 
+export const Message = styled.span`
+  color: #fff;
+  font-size: 14px;
+`;
+
+export const MessageDate = styled.span`
+  display: block;
+  font-size: 10px;
+`;
+
 export const ChatMessageBox = styled.div<{ author: string }>`
   border-radius: 6px;
   background: ${({ author }) => (author === "own" ? "#505050" : "#98989f")};
@@ -83,9 +94,8 @@ export const ChatMessageBox = styled.div<{ author: string }>`
   padding: 5px;
   max-width: 250px;
   color: #fff;
-`;
 
-export const Message = styled.span`
-  color: #fff;
-  font-size: 14px;
+  & > ${MessageDate} {
+    text-align: ${({ author }) => (author === "own" ? "right" : "left")};
+  }
 `;
