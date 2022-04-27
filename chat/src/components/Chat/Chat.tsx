@@ -24,10 +24,13 @@ socket.on("connect", () => console.log("Chat running on port 3333"));
 
 export const Chat = () => {
   const [message, setMessage] = useState("");
+
   const [messages, setMessages] = useState<any>([]);
+
   const [connection, setConnection] = useState<ConnectionInterface | null>(
     null
   );
+
   const [IPv4, setIPv4] = useState(null);
 
   useEffect(() => {
@@ -35,8 +38,9 @@ export const Chat = () => {
       .get("https://geolocation-db.com/json/")
       .then((response) => {
         setIPv4(response.data.IPv4);
+
         setConnection({
-          id: response.data.IPv4,
+          id: Math.random().toString(),
           room: "sala1",
           username: "anonymous",
         });
@@ -45,6 +49,7 @@ export const Chat = () => {
 
   useEffect(() => {
     if (connection === null) return;
+
     socket.emit("chat.join", connection, (response: any) => {
       setMessages(response);
     });
@@ -53,6 +58,7 @@ export const Chat = () => {
   useEffect(() => {
     const handleNewMessage = (newMessage: any) =>
       setMessages([...messages, newMessage]);
+
     socket.on("chat.message", (data) => handleNewMessage(data));
   }, [messages]);
 
@@ -72,8 +78,14 @@ export const Chat = () => {
 
   const handleInputChange = (event: any) => setMessage(event.target.value);
 
+  const handleKeyPress = (event: any) => {
+    if (event.key === "Enter") {
+      handleSendMessage();
+    }
+  };
+
   return (
-    <ChatContainer>
+    <ChatContainer onKeyPress={handleKeyPress}>
       <ChatHeader>
         <ChatTitle>CHAT</ChatTitle>
         <label htmlFor="username">Username</label>
