@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { ChatInputMessage } from "./ChatInputMessage";
 import { ChatMessageBox } from "./ChatMessageBox";
@@ -23,24 +23,19 @@ interface ConnectionInterface {
 socket.on("connect", () => console.log("Chat running on port 3333"));
 
 export const Chat = () => {
-  const [message, setMessage] = useState("");
-
   const [messages, setMessages] = useState<any>([]);
-
   const [connection, setConnection] = useState<ConnectionInterface | null>(
     null
   );
-
-  const [IPv4, setIPv4] = useState(null);
 
   useEffect(() => {
     const res = axios
       .get("https://geolocation-db.com/json/")
       .then((response) => {
-        setIPv4(response.data.IPv4);
+        const IPv4 = response.data.IPv4;
 
         setConnection({
-          id: Math.random().toString(),
+          id: IPv4 ?? Math.random().toString(),
           room: "sala1",
           username: "anonymous",
         });
@@ -63,7 +58,9 @@ export const Chat = () => {
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (message.trim()) {
+    if (inputRef.current) {
+      const message = inputRef.current.value.trim();
+
       const newMessage = {
         id: connection?.id,
         room: connection?.room,
@@ -72,17 +69,17 @@ export const Chat = () => {
       };
 
       socket.emit("chat.message", newMessage);
-      setMessage("");
+      inputRef.current.value = "";
     }
   };
-
-  const handleInputChange = (event: any) => setMessage(event.target.value);
 
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
       handleSendMessage();
     }
   };
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <ChatContainer onKeyPress={handleKeyPress}>
@@ -106,7 +103,7 @@ export const Chat = () => {
         })}
       </ChatContent>
       <ChatFooter>
-        <ChatInputMessage label="Message" onChange={handleInputChange} />
+        <ChatInputMessage innerRef={inputRef} label="Message" />
         <ChatButton onClick={handleSendMessage}>Send</ChatButton>
       </ChatFooter>
     </ChatContainer>
